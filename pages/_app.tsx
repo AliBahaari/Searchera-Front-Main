@@ -19,6 +19,7 @@ const theme = createTheme({
     common: {
       white: "#FFF",
       black: "#000",
+      golden: "#FFD700",
     },
   },
   typography: {

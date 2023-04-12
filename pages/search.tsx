@@ -14,6 +14,8 @@ import {
 import SortIcon from "@mui/icons-material/Sort";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 const STextField = styled(TextField)(({ theme }) => ({
   [`& .${filledInputClasses.root}`]: {
@@ -32,14 +34,32 @@ const STextField = styled(TextField)(({ theme }) => ({
 }));
 
 export default function Search() {
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [searchText, setSearchText] = useState<string>("");
   const suggestionListRef = useRef(null);
+  const query = router.query.query;
+  const [fetchedData, setFetchedData] = useState<any[]>();
 
   useEffect(() => {
     if (searchText.length > 0) setAnchorEl(suggestionListRef.current);
     else setAnchorEl(null);
   }, [searchText]);
+
+  useEffect(() => {
+    async function fetchQuery() {
+      const fetchQueryRequest = await axios.post(
+        "http://127.0.0.1:5000/api/amirhoseyn",
+        {
+          input_searchbox: String(query),
+        }
+      );
+
+      setFetchedData(fetchQueryRequest.data);
+    }
+
+    fetchQuery();
+  }, [query]);
 
   return (
     <>
@@ -144,11 +164,13 @@ export default function Search() {
       </Grid>
 
       <Grid container px={4} pb={4}>
-        {[0, 1, 2, 3, 4].map((i, index) => (
-          <Grid item xs={3} key={index}>
-            <ProductThumbnail />
-          </Grid>
-        ))}
+        {fetchedData &&
+          fetchedData?.length > 0 &&
+          fetchedData.map((props, index) => (
+            <Grid item xs={3} key={index}>
+              <ProductThumbnail {...props} />
+            </Grid>
+          ))}
       </Grid>
     </>
   );

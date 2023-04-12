@@ -1,10 +1,8 @@
 import {
   AppBar,
   Box,
-  Button,
   ClickAwayListener,
   Grid,
-  Icon,
   Popper,
   TextField,
   Toolbar,
@@ -15,6 +13,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import StarIcon from "@mui/icons-material/Star";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 
 const STextField = styled(TextField)(({ theme }) => ({
   [`& .${filledInputClasses.root}`]: {
@@ -33,6 +32,7 @@ const STextField = styled(TextField)(({ theme }) => ({
 }));
 
 export default function Home() {
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [searchText, setSearchText] = useState<string>("");
   const suggestionListRef = useRef(null);
@@ -93,6 +93,14 @@ export default function Home() {
                 ),
               }}
               onChange={(event) => setSearchText(event.target.value)}
+              onKeyDown={(event) => {
+                router.push("/search", {
+                  query: {
+                    // @ts-ignore
+                    query: event.target.value,
+                  },
+                });
+              }}
             />
 
             <Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
