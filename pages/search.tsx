@@ -1,8 +1,46 @@
 import ProductThumbnail from "@/components/ProductThumbnail";
-import { Box, Grid, Typography, AppBar, Toolbar } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Typography,
+  AppBar,
+  Toolbar,
+  styled,
+  TextField,
+  filledInputClasses,
+  ClickAwayListener,
+  Popper,
+} from "@mui/material";
 import SortIcon from "@mui/icons-material/Sort";
+import SearchIcon from "@mui/icons-material/Search";
+import { useEffect, useRef, useState } from "react";
+
+const STextField = styled(TextField)(({ theme }) => ({
+  [`& .${filledInputClasses.root}`]: {
+    borderRadius: theme.spacing(1),
+  },
+  [`& .${filledInputClasses.root}::before`]: {
+    borderBottom: 0,
+  },
+  [`& .${filledInputClasses.root}::after`]: {
+    borderBottom: 0,
+  },
+  [`& .${filledInputClasses.input}`]: {
+    paddingTop: theme.spacing(1.5),
+    paddingBottom: theme.spacing(1.5),
+  },
+}));
 
 export default function Search() {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [searchText, setSearchText] = useState<string>("");
+  const suggestionListRef = useRef(null);
+
+  useEffect(() => {
+    if (searchText.length > 0) setAnchorEl(suggestionListRef.current);
+    else setAnchorEl(null);
+  }, [searchText]);
+
   return (
     <>
       <AppBar position="relative" elevation={1}>
@@ -22,6 +60,65 @@ export default function Search() {
           </Typography>
         </Toolbar>
       </AppBar>
+
+      <Grid container height={100}>
+        <Grid
+          item
+          xs={2}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Box sx={{ width: 100, height: 30, backgroundColor: "#000" }}></Box>
+        </Grid>
+
+        <Grid
+          item
+          xs={6}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <ClickAwayListener
+            onClickAway={() => {
+              setSearchText("");
+            }}
+          >
+            <Grid width={"100%"}>
+              <STextField
+                autoComplete="off"
+                ref={suggestionListRef}
+                fullWidth
+                variant="filled"
+                placeholder="دنبال چی می گردی؟"
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <SearchIcon
+                      sx={{ mr: 1, color: ({ palette }) => palette.grey[400] }}
+                    />
+                  ),
+                }}
+                onChange={(event) => setSearchText(event.target.value)}
+              />
+
+              <Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
+                <Box
+                  sx={{
+                    border: 1,
+                    borderTop: 0,
+                    borderColor: ({ palette }) => palette.grey[400],
+                    backgroundColor: ({ palette }) => palette.common.white,
+                    p: 2,
+                    // @ts-ignore
+                    width: suggestionListRef.current?.offsetWidth - 100,
+                  }}
+                ></Box>
+              </Popper>
+            </Grid>
+          </ClickAwayListener>
+        </Grid>
+      </Grid>
 
       <Grid
         display={"flex"}

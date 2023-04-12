@@ -13,6 +13,7 @@ import {
   styled,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import StarIcon from "@mui/icons-material/Star";
 import { useEffect, useRef, useState } from "react";
 
 const STextField = styled(TextField)(({ theme }) => ({
@@ -82,7 +83,7 @@ export default function Home() {
               ref={suggestionListRef}
               fullWidth
               variant="filled"
-              placeholder="جستجو"
+              placeholder="دنبال چی می گردی؟"
               InputProps={{
                 disableUnderline: true,
                 startAdornment: (
@@ -105,7 +106,72 @@ export default function Home() {
                   // @ts-ignore
                   width: suggestionListRef.current?.offsetWidth - 100,
                 }}
-              ></Box>
+              >
+                <Grid container spacing={2} mb={2}>
+                  <Grid item xs={2}>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        height: 100,
+                        backgroundColor: "#000",
+                      }}
+                    ></Box>
+                  </Grid>
+                  <Grid item xs={10} display={"flex"} flexDirection={"column"}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: " center",
+                        gap: 4,
+                      }}
+                    >
+                      <Typography>
+                        گوشی موبایل اپل مدل iPhone 13 CH دو سیم‌ کارت ظرفیت 128
+                        گیگابایت و رم 4 گیگابایت - نات اکتیو
+                      </Typography>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          gap: 0.5,
+                        }}
+                      >
+                        <Typography variant="caption">4.5</Typography>
+                        <StarIcon sx={{ fontSize: 20 }} />
+                      </Box>
+                    </Box>
+
+                    <Typography sx={{ alignSelf: "flex-end" }}>
+                      44,500,000 تومان
+                    </Typography>
+                  </Grid>
+
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: 1.5,
+                      backgroundColor: "#000",
+                      mt: 2,
+                      ml: 2,
+                    }}
+                  ></Box>
+                </Grid>
+
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <SearchIcon
+                    sx={{
+                      fontSize: 20,
+                      color: ({ palette }) => palette.grey[400],
+                    }}
+                  />
+                  <Typography>گوشی آیفون</Typography>
+                  <Typography sx={{ fontWeight: "bold" }}>مدل پرو</Typography>
+                </Box>
+              </Box>
             </Popper>
           </Grid>
         </ClickAwayListener>
