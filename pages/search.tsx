@@ -11,11 +11,16 @@ import {
   ClickAwayListener,
   Popper,
 } from "@mui/material";
-import SortIcon from "@mui/icons-material/Sort";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Logo from "@/public/images/Logo.svg";
+import Image from "next/image";
+import SearchedProductWithThumbnail from "@/components/SearchedProductWithThumbnail";
+import SearchedProduct from "@/components/SearchedProduct";
+import Sort from "@/public/icons/Sort.svg";
+import MainAppBar from "@/components/MainAppBar";
 
 const STextField = styled(TextField)(({ theme }) => ({
   [`& .${filledInputClasses.root}`]: {
@@ -37,9 +42,13 @@ export default function Search() {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [searchText, setSearchText] = useState<string>("");
+  const [searchTextDelay, setSearchTextDelay] = useState<string>("");
   const suggestionListRef = useRef(null);
   const query = router.query.query;
-  const [fetchedData, setFetchedData] = useState<any[]>();
+  const [fetchedData, setFetchedData] = useState<any[]>([]);
+  const [suggestionListFetchedData, setSuggestionListFetchedData] = useState<
+    any[]
+  >([]);
 
   useEffect(() => {
     if (searchText.length > 0) setAnchorEl(suggestionListRef.current);
@@ -61,40 +70,64 @@ export default function Search() {
     fetchQuery();
   }, [query]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setSearchTextDelay(searchText);
+    }, 500);
+  }, [searchText]);
+
+  useEffect(() => {
+    if (searchTextDelay.length > 0) {
+      setSuggestionListFetchedData([]);
+
+      axios
+        .post("http://127.0.0.1:5000/api/amirhoseyn", {
+          input_searchbox: String(searchTextDelay),
+        })
+        .then((result) => {
+          if (result.data.length > 0) {
+            let allData: any[] = [];
+
+            result.data.forEach((i: any, index: number) => {
+              if (index < 5) allData.push(i);
+            });
+
+            setSuggestionListFetchedData(allData);
+          }
+        });
+
+      setAnchorEl(suggestionListRef.current);
+    } else setAnchorEl(null);
+  }, [searchTextDelay, query]);
+
   return (
     <>
-      <AppBar position="relative" elevation={1}>
-        <Toolbar
-          sx={{
-            background: ({ palette }) => palette.primary.main,
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            sx={{
-              color: ({ palette }) => palette.common.white,
-            }}
-            variant="h3"
-          >
-            جستجو سریع و راحت با Searchera
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <MainAppBar />
 
-      <Grid container height={100}>
+      <Grid container gap={2} p={4}>
         <Grid
           item
-          xs={2}
+          xs={12}
+          md={2}
+          lg={1}
           display={"flex"}
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Box sx={{ width: 100, height: 30, backgroundColor: "#000" }}></Box>
+          <Image
+            style={{ margin: "0 auto" }}
+            src={Logo}
+            width={100}
+            height={undefined}
+            alt={"Logo"}
+          />
         </Grid>
 
         <Grid
           item
-          xs={6}
+          xs={12}
+          md={6}
+          lg={5}
           display={"flex"}
           justifyContent={"center"}
           alignItems={"center"}
@@ -114,9 +147,7 @@ export default function Search() {
                 InputProps={{
                   disableUnderline: true,
                   startAdornment: (
-                    <SearchIcon
-                      sx={{ mr: 1, color: ({ palette }) => palette.grey[400] }}
-                    />
+                    <SearchIcon sx={{ mr: 1, color: "common.textGrey" }} />
                   ),
                 }}
                 onChange={(event) => setSearchText(event.target.value)}
@@ -127,13 +158,27 @@ export default function Search() {
                   sx={{
                     border: 1,
                     borderTop: 0,
-                    borderColor: ({ palette }) => palette.grey[400],
-                    backgroundColor: ({ palette }) => palette.common.white,
+                    borderColor: "common.textGrey",
+                    backgroundColor: "common.white",
                     p: 2,
                     // @ts-ignore
                     width: suggestionListRef.current?.offsetWidth - 100,
                   }}
-                ></Box>
+                >
+                  {suggestionListFetchedData?.length === 0 && (
+                    <Typography>موردی یافت نشد.</Typography>
+                  )}
+                  {suggestionListFetchedData.map((props, index) => (
+                    <SearchedProductWithThumbnail key={index} {...props} />
+                  ))}
+                  {suggestionListFetchedData.map((props, index) => (
+                    <SearchedProduct
+                      key={index}
+                      {...props}
+                      searchText={searchText}
+                    />
+                  ))}
+                </Box>
               </Popper>
             </Grid>
           </ClickAwayListener>
@@ -142,32 +187,47 @@ export default function Search() {
 
       <Grid
         display={"flex"}
+        flexDirection={{ xs: "column", sm: "row" }}
         justifyContent={"space-between"}
         alignItems={"center"}
-        my={3}
+        gap={4}
+        mb={3}
         px={4}
       >
-        <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
-          <SortIcon />
-          <Typography>مرتب سازی:</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", gap: 0.5 }}>
+            <Image src={Sort} width={25} height={25} alt={"Sort"} />
+            <Typography>مرتب سازی:</Typography>
+          </Box>
+
           <Typography
-            color={"grey.600"}
+            color={"common.textGrey"}
             sx={{ color: "primary.main", fontWeight: "bold" }}
           >
-            پرفروش ترین
+            مرتبط ترین
           </Typography>
-          <Typography color={"grey.600"}>مرتبط ترین</Typography>
-          <Typography color={"grey.600"}>ارزان ترین</Typography>
-          <Typography color={"grey.600"}>گران ترین</Typography>
+          <Typography color={"common.textGrey"}>پرفروش ترین</Typography>
+          <Typography color={"common.textGrey"}>ارزان ترین</Typography>
+          <Typography color={"common.textGrey"}>گران ترین</Typography>
         </Box>
-        <Typography>27 کالا</Typography>
+
+        <Typography>
+          {fetchedData?.length} {"کالا"}
+        </Typography>
       </Grid>
 
       <Grid container px={4} pb={4}>
         {fetchedData &&
           fetchedData?.length > 0 &&
           fetchedData.map((props, index) => (
-            <Grid item xs={3} key={index}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
               <ProductThumbnail {...props} />
             </Grid>
           ))}

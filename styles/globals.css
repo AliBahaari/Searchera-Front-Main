@@ -1,74 +1,77 @@
 @font-face {
-  font-family: Vazirmatn FD;
-  src: url('../public/fonts/Vazirmatn-FD-Thin.woff2') format('woff2');
-  font-weight: 100;
-  font-style: normal;
-  font-display: swap;
+	font-family: IRANSansXFaNum;
+	font-style: normal;
+	font-weight: 100;
+	src: url('../public/fonts/Woff/IRANSansXFaNum-thin.woff') format('woff'),   
+	url('../public/fonts/Woff2/IRANSansXFaNum-thin.woff2') format('woff2');		
 }
 
 @font-face {
-  font-family: Vazirmatn FD;
-  src: url('../public/fonts/Vazirmatn-FD-ExtraLight.woff2') format('woff2');
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
+	font-family: IRANSansXFaNum;
+	font-style: normal;
+	font-weight: 200;
+	src: url('../public/fonts/Woff/IRANSansXFaNum-UltraLight.woff') format('woff'),   
+	url('../public/fonts/Woff2/IRANSansXFaNum-UltraLight.woff2') format('woff2');	
 }
 
 @font-face {
-  font-family: Vazirmatn FD;
-  src: url('../public/fonts/Vazirmatn-FD-Light.woff2') format('woff2');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
+	font-family: IRANSansXFaNum;
+	font-style: normal;
+	font-weight: 300;
+	src: url('../public/fonts/Woff/IRANSansXFaNum-light.woff') format('woff'),   
+	url('../public/fonts/Woff2/IRANSansXFaNum-light.woff2') format('woff2');		 
 }
 
 @font-face {
-  font-family: Vazirmatn FD;
-  src: url('../public/fonts/Vazirmatn-FD-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+	font-family: IRANSansXFaNum;
+	font-style: normal;
+	font-weight: 500;
+	src: url('../public/fonts/Woff/IRANSansXFaNum-medium.woff') format('woff'),   
+	url('../public/fonts/Woff2/IRANSansXFaNum-medium.woff2') format('woff2');		 
 }
 
 @font-face {
-  font-family: Vazirmatn FD;
-  src: url('../public/fonts/Vazirmatn-FD-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
+	font-family: IRANSansXFaNum;
+	font-style: normal;
+	font-weight: 600;
+	src: url('../public/fonts/Woff/IRANSansXFaNum-demibold.woff') format('woff'),   
+	url('../public/fonts/Woff2/IRANSansXFaNum-demibold.woff2') format('woff2');	 
 }
 
 @font-face {
-  font-family: Vazirmatn FD;
-  src: url('../public/fonts/Vazirmatn-FD-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
+	font-family: IRANSansXFaNum;
+	font-style: normal;
+	font-weight: 800;
+	src: url('../public/fonts/Woff/IRANSansXFaNum-extrabold.woff') format('woff'),   
+	url('../public/fonts/Woff2/IRANSansXFaNum-extrabold.woff2') format('woff2');		 
 }
 
 @font-face {
-  font-family: Vazirmatn FD;
-  src: url('../public/fonts/Vazirmatn-FD-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+	font-family: IRANSansXFaNum;
+	font-style: normal;
+	font-weight: 900;
+	src: url('../public/fonts/Woff/IRANSansXFaNum-black.woff') format('woff'),   
+	url('../public/fonts/Woff2/IRANSansXFaNum-black.woff2') format('woff2');		 
 }
 
 @font-face {
-  font-family: Vazirmatn FD;
-  src: url('../public/fonts/Vazirmatn-FD-ExtraBold.woff2') format('woff2');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
+	font-family: IRANSansXFaNum;
+	font-style: normal;
+	font-weight: bold;
+	src: url('../public/fonts/Woff/IRANSansXFaNum-bold.woff') format('woff'),   
+	url('../public/fonts/Woff2/IRANSansXFaNum-bold.woff2') format('woff2');	 
 }
 
 @font-face {
-  font-family: Vazirmatn FD;
-  src: url('../public/fonts/Vazirmatn-FD-Black.woff2') format('woff2');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
+	font-family: IRANSansXFaNum;
+	font-style: normal;
+	font-weight: normal;
+	src: url('../public/fonts/Woff/IRANSansXFaNum-regular.woff') format('woff'),   
+	url('../public/fonts/Woff2/IRANSansXFaNum-regular.woff2') format('woff2');	
 }
+
+
+
 
 * {
   margin: 0;
@@ -77,5 +80,6 @@
 }
 
 html {
-  font-family: Vazirmatn FD;
+  font-family: IRANSansXFaNum;
+  color: #3F4064
 }

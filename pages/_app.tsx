@@ -18,12 +18,15 @@ const theme = createTheme({
     },
     common: {
       white: "#FFF",
-      black: "#000",
+      black: "#414266",
+      // @ts-ignore
+      textGrey: "#767790",
+      backgroundGrey: "#F8F8F8",
       golden: "#FFD700",
     },
   },
   typography: {
-    fontFamily: "Vazirmatn FD",
+    fontFamily: "IRANSansXFaNum",
     fontSize: 16,
     htmlFontSize: 16,
     fontWeightLight: 300,

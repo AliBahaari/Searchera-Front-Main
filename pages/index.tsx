@@ -11,9 +11,15 @@ import {
   styled,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import StarIcon from "@mui/icons-material/Star";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import axios from "axios";
+import SearchedProductWithThumbnail from "@/components/SearchedProductWithThumbnail";
+import SearchedProduct from "@/components/SearchedProduct";
+import Logo from "@/public/images/Logo.svg";
+import SearcheraLogo from "@/public/images/Searchera-Logo.svg";
+import Image from "next/image";
+import MainAppBar from "@/components/MainAppBar";
 
 const STextField = styled(TextField)(({ theme }) => ({
   [`& .${filledInputClasses.root}`]: {
@@ -35,155 +41,135 @@ export default function Home() {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [searchText, setSearchText] = useState<string>("");
+  const [searchTextDelay, setSearchTextDelay] = useState<string>("");
   const suggestionListRef = useRef(null);
+  const query = router.query.query;
+  const [fetchedData, setFetchedData] = useState<any[]>([]);
 
   useEffect(() => {
-    if (searchText.length > 0) setAnchorEl(suggestionListRef.current);
-    else setAnchorEl(null);
+    setTimeout(() => {
+      setSearchTextDelay(searchText);
+    }, 500);
   }, [searchText]);
+
+  useEffect(() => {
+    if (searchTextDelay.length > 0) {
+      setFetchedData([]);
+
+      axios
+        .post("http://127.0.0.1:5000/api/amirhoseyn", {
+          input_searchbox: String(searchTextDelay),
+        })
+        .then((result) => {
+          if (result.data.length > 0) {
+            let allData: any[] = [];
+
+            result.data.forEach((i: any, index: number) => {
+              if (index < 5) allData.push(i);
+            });
+            console.info(allData);
+            setFetchedData(allData);
+          }
+        });
+
+      setAnchorEl(suggestionListRef.current);
+    } else setAnchorEl(null);
+  }, [searchTextDelay, query]);
 
   return (
     <>
-      <AppBar position="relative" elevation={1}>
-        <Toolbar
-          sx={{
-            background: ({ palette }) => palette.primary.main,
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            sx={{
-              color: ({ palette }) => palette.common.white,
-            }}
-            variant="h3"
-          >
-            جستجو سریع و راحت با Searchera
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <MainAppBar />
 
-      <Grid
-        width={"50%"}
-        mx={"auto"}
-        pt={20}
-        display={"flex"}
-        flexDirection={"column"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        gap={10}
+      <Box
+        sx={{
+          height: "calc(100vh - 200px)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
-        <ClickAwayListener
-          onClickAway={() => {
-            setSearchText("");
-          }}
+        <Image
+          style={{ margin: "0 auto", display: "block" }}
+          src={Logo}
+          width={200}
+          height={undefined}
+          alt={"Logo"}
+        />
+
+        <Grid
+          mt={5}
+          width={{ xs: "70%", sm: "60%", lg: "40%" }}
+          mx={"auto"}
+          display={"flex"}
+          flexDirection={"column"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          gap={10}
         >
-          <Grid width={"100%"}>
-            <STextField
-              autoComplete="off"
-              ref={suggestionListRef}
-              fullWidth
-              variant="filled"
-              placeholder="دنبال چی می گردی؟"
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <SearchIcon
-                    sx={{ mr: 1, color: ({ palette }) => palette.grey[400] }}
-                  />
-                ),
-              }}
-              onChange={(event) => setSearchText(event.target.value)}
-              onKeyDown={(event) => {
-                router.push("/search", {
-                  query: {
-                    // @ts-ignore
-                    query: event.target.value,
-                  },
-                });
-              }}
-            />
-
-            <Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
-              <Box
-                sx={{
-                  border: 1,
-                  borderTop: 0,
-                  borderColor: ({ palette }) => palette.grey[400],
-                  backgroundColor: ({ palette }) => palette.common.white,
-                  p: 2,
-                  // @ts-ignore
-                  width: suggestionListRef.current?.offsetWidth - 100,
+          <ClickAwayListener
+            onClickAway={() => {
+              setSearchText("");
+            }}
+          >
+            <Grid width={"100%"}>
+              <STextField
+                autoComplete="off"
+                ref={suggestionListRef}
+                fullWidth
+                variant="filled"
+                placeholder="دنبال چی می گردی؟"
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <SearchIcon sx={{ mr: 1, color: "common.textGrey" }} />
+                  ),
                 }}
-              >
-                <Grid container spacing={2} mb={2}>
-                  <Grid item xs={2}>
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: 100,
-                        backgroundColor: "#000",
-                      }}
-                    ></Box>
-                  </Grid>
-                  <Grid item xs={10} display={"flex"} flexDirection={"column"}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: " center",
-                        gap: 4,
-                      }}
-                    >
-                      <Typography>
-                        گوشی موبایل اپل مدل iPhone 13 CH دو سیم‌ کارت ظرفیت 128
-                        گیگابایت و رم 4 گیگابایت - نات اکتیو
-                      </Typography>
+                onChange={(event) => setSearchText(event.target.value)}
+                onKeyDown={(event) => {
+                  console.info(event.code);
+                  if (event.code === "Enter" || event.code === "NumpadEnter")
+                    router.push({
+                      pathname: "/search/",
+                      query: {
+                        // @ts-ignore
+                        query: event.target.value,
+                      },
+                    });
+                }}
+              />
 
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          gap: 0.5,
-                        }}
-                      >
-                        <Typography variant="caption">4.5</Typography>
-                        <StarIcon sx={{ fontSize: 20 }} />
-                      </Box>
-                    </Box>
-
-                    <Typography sx={{ alignSelf: "flex-end" }}>
-                      44,500,000 تومان
-                    </Typography>
-                  </Grid>
-
-                  <Box
-                    sx={{
-                      width: "100%",
-                      height: 1.5,
-                      backgroundColor: "#000",
-                      mt: 2,
-                      ml: 2,
-                    }}
-                  ></Box>
-                </Grid>
-
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <SearchIcon
-                    sx={{
-                      fontSize: 20,
-                      color: ({ palette }) => palette.grey[400],
-                    }}
-                  />
-                  <Typography>گوشی آیفون</Typography>
-                  <Typography sx={{ fontWeight: "bold" }}>مدل پرو</Typography>
+              <Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
+                <Box
+                  sx={{
+                    border: 1,
+                    borderTop: 0,
+                    borderColor: "common.textGrey",
+                    backgroundColor: "common.white",
+                    p: 2,
+                    // @ts-ignore
+                    width: suggestionListRef.current?.offsetWidth - 100,
+                  }}
+                >
+                  {fetchedData?.length === 0 && (
+                    <Typography>موردی یافت نشد.</Typography>
+                  )}
+                  {fetchedData.map((props, index) => (
+                    <SearchedProductWithThumbnail key={index} {...props} />
+                  ))}
+                  {fetchedData.map((props, index) => (
+                    <SearchedProduct
+                      key={index}
+                      {...props}
+                      searchText={searchText}
+                    />
+                  ))}
                 </Box>
-              </Box>
-            </Popper>
-          </Grid>
-        </ClickAwayListener>
-      </Grid>
+              </Popper>
+            </Grid>
+          </ClickAwayListener>
+        </Grid>
+      </Box>
     </>
   );
 }
