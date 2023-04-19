@@ -14,7 +14,7 @@ const styleProps = {
 };
 
 type ProductThumbnailProps = {
-  DigiPlus_delivery: Array<string>;
+  digiplus_delivery: Array<string>;
   color: Array<string>;
   id: number;
   images_url: string;
@@ -28,7 +28,7 @@ type ProductThumbnailProps = {
 export default function ProductThumbnail({
   title_fa,
   rate_star,
-  DigiPlus_delivery,
+  digiplus_delivery,
   images_url,
   price,
   url,
@@ -38,7 +38,7 @@ export default function ProductThumbnail({
       sx={{
         height: "100%",
         border: 1,
-        borderColor: "grey.200",
+        borderColor: "common.borderColor",
       }}
     >
       <Link href={"https://www.digikala.com" + url} target="_blank">
@@ -52,17 +52,18 @@ export default function ProductThumbnail({
           }}
         >
           <Image
+            fill
             src={images_url}
-            layout="fill"
-            objectFit="contain"
+            style={{ objectFit: "contain" }}
             alt={title_fa}
+            sizes="100%"
           />
         </div>
       </Link>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 3 }}>
         <Chip
-          label={DigiPlus_delivery[0]}
+          label={digiplus_delivery[0]}
           icon={
             <Image
               src={Truck}
@@ -104,13 +105,17 @@ export default function ProductThumbnail({
 
           <Box sx={styleProps}>
             <Typography variant="caption">{rate_star}</Typography>
-            <StarIcon sx={{ fontSize: 20, color: "common.golden" }} />
+            <StarIcon sx={{ fontSize: 20, color: "common.goldenColor" }} />
           </Box>
         </Box>
 
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Typography variant="h5" sx={{ fontWeight: 500 }}>
-            {price.toLocaleString()} {"تومان"}
+          <Typography variant="h5" sx={{ fontWeight: 600 }}>
+            {price !== 0
+              ? `${parseInt(
+                  price?.toString()?.split("").slice(0, -1).join("")
+                ).toLocaleString()} تومان`
+              : "ناموجود"}
           </Typography>
         </Box>
       </Box>

@@ -22,7 +22,13 @@ function SearchedProductWithThumbnail({
   price,
 }: SearchedProductWithThumbnailProps) {
   return (
-    <Grid container mb={2} borderBottom={1} borderColor={"#EEE"} pb={1}>
+    <Grid
+      container
+      mb={2}
+      borderBottom={1}
+      borderColor={"common.borderColor"}
+      pb={1}
+    >
       <Grid item xs={2}>
         <Link href={"https://www.digikala.com" + url} target="_blank">
           <div
@@ -34,10 +40,11 @@ function SearchedProductWithThumbnail({
             }}
           >
             <Image
+              fill
               src={images_url}
-              layout="fill"
-              objectFit="contain"
+              style={{ objectFit: "contain" }}
               alt={title_fa}
+              sizes="100%"
             />
           </div>
         </Link>
@@ -47,7 +54,7 @@ function SearchedProductWithThumbnail({
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: " center",
+            alignItems: "flex-start",
             gap: 4,
           }}
         >
@@ -69,12 +76,16 @@ function SearchedProductWithThumbnail({
             }}
           >
             <Typography variant="caption">{rate_star}</Typography>
-            <StarIcon sx={{ fontSize: 20, color: "common.golden" }} />
+            <StarIcon sx={{ fontSize: 20, color: "common.goldenColor" }} />
           </Box>
         </Box>
 
-        <Typography sx={{ alignSelf: "flex-end" }}>
-          {price.toLocaleString()} {"تومان"}
+        <Typography sx={{ alignSelf: "flex-end", fontWeight: 600 }}>
+          {price !== 0
+            ? `${parseInt(
+                price?.toString()?.split("").slice(0, -1).join("")
+              ).toLocaleString()} تومان`
+            : "ناموجود"}
         </Typography>
       </Grid>
     </Grid>

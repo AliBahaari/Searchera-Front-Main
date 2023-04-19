@@ -3,13 +3,13 @@ import {
   Box,
   Grid,
   Typography,
-  AppBar,
-  Toolbar,
   styled,
   TextField,
   filledInputClasses,
   ClickAwayListener,
   Popper,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useRef, useState } from "react";
@@ -21,6 +21,8 @@ import SearchedProductWithThumbnail from "@/components/SearchedProductWithThumbn
 import SearchedProduct from "@/components/SearchedProduct";
 import Sort from "@/public/icons/Sort.svg";
 import MainAppBar from "@/components/MainAppBar";
+import CancelIcon from "@mui/icons-material/Cancel";
+import Link from "next/link";
 
 const STextField = styled(TextField)(({ theme }) => ({
   [`& .${filledInputClasses.root}`]: {
@@ -42,7 +44,6 @@ export default function Search() {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [searchText, setSearchText] = useState<string>("");
-  const [searchTextDelay, setSearchTextDelay] = useState<string>("");
   const suggestionListRef = useRef(null);
   const query = router.query.query;
   const [fetchedData, setFetchedData] = useState<any[]>([]);
@@ -51,16 +52,12 @@ export default function Search() {
   >([]);
 
   useEffect(() => {
-    if (searchText.length > 0) setAnchorEl(suggestionListRef.current);
-    else setAnchorEl(null);
-  }, [searchText]);
-
-  useEffect(() => {
     async function fetchQuery() {
       const fetchQueryRequest = await axios.post(
         "http://127.0.0.1:5000/api/amirhoseyn",
         {
           input_searchbox: String(query),
+          input_type: 0,
         }
       );
 
@@ -71,25 +68,20 @@ export default function Search() {
   }, [query]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setSearchTextDelay(searchText);
-    }, 500);
-  }, [searchText]);
+    setSuggestionListFetchedData([]);
 
-  useEffect(() => {
-    if (searchTextDelay.length > 0) {
-      setSuggestionListFetchedData([]);
-
+    if (searchText.length > 0) {
       axios
         .post("http://127.0.0.1:5000/api/amirhoseyn", {
-          input_searchbox: String(searchTextDelay),
+          input_searchbox: String(searchText),
+          input_type: 0,
         })
         .then((result) => {
           if (result.data.length > 0) {
             let allData: any[] = [];
 
             result.data.forEach((i: any, index: number) => {
-              if (index < 5) allData.push(i);
+              if (index < 11) allData.push(i);
             });
 
             setSuggestionListFetchedData(allData);
@@ -98,10 +90,41 @@ export default function Search() {
 
       setAnchorEl(suggestionListRef.current);
     } else setAnchorEl(null);
-  }, [searchTextDelay, query]);
+  }, [searchText]);
+
+  const [filterType, setFilterType] = useState<number>(0);
+
+  const handleFiltering = async (inputType: number) => {
+    setShowLoading(true);
+
+    const fetchQueryRequest = await axios.post(
+      "http://127.0.0.1:5000/api/amirhoseyn",
+      {
+        input_searchbox: String(query),
+        input_type: inputType,
+      }
+    );
+
+    setShowLoading(false);
+    setFilterType(inputType);
+    setFetchedData(fetchQueryRequest.data);
+  };
+
+  const [showLoading, setShowLoading] = useState<boolean>(false);
 
   return (
     <>
+      <Backdrop
+        sx={{
+          color: "common.white",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+        open={showLoading}
+        onClick={() => setShowLoading((previousState) => !previousState)}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       <MainAppBar />
 
       <Grid container gap={2} p={4}>
@@ -114,13 +137,15 @@ export default function Search() {
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Image
-            style={{ margin: "0 auto" }}
-            src={Logo}
-            width={100}
-            height={undefined}
-            alt={"Logo"}
-          />
+          <Link href={"/"}>
+            <Image
+              style={{ margin: "0 auto" }}
+              src={Logo}
+              width={100}
+              height={undefined}
+              alt={"Logo"}
+            />
+          </Link>
         </Grid>
 
         <Grid
@@ -139,6 +164,24 @@ export default function Search() {
           >
             <Grid width={"100%"}>
               <STextField
+                sx={{
+                  ["& .MuiInputBase-root"]: {
+                    border: searchText.length && 1,
+                    borderColor:
+                      searchText.length &&
+                      // @ts-ignore
+                      "common.borderColor",
+                    backgroundColor: searchText.length && "common.white",
+                    borderBottomRightRadius: searchText.length ? 0 : 8,
+                    borderBottomLeftRadius: searchText.length ? 0 : 8,
+                    borderBottom: searchText.length && 1,
+                    borderBottomColor:
+                      searchText.length &&
+                      // @ts-ignore
+                      "common.suggestionListBorderColor",
+                  },
+                }}
+                value={searchText}
                 autoComplete="off"
                 ref={suggestionListRef}
                 fullWidth
@@ -147,37 +190,68 @@ export default function Search() {
                 InputProps={{
                   disableUnderline: true,
                   startAdornment: (
-                    <SearchIcon sx={{ mr: 1, color: "common.textGrey" }} />
+                    <SearchIcon sx={{ mr: 1, color: "common.iconColor" }} />
+                  ),
+                  endAdornment: (
+                    <CancelIcon
+                      onClick={() => setSearchText("")}
+                      sx={{
+                        ml: 1,
+                        color: "common.iconColor",
+                        display: searchText.length ? "block" : "none",
+                        cursor: "pointer",
+                      }}
+                    />
                   ),
                 }}
                 onChange={(event) => setSearchText(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.code === "Enter" || event.code === "NumpadEnter")
+                    router.push({
+                      pathname: "/search/",
+                      query: {
+                        // @ts-ignore
+                        query: event.target.value,
+                      },
+                    });
+                }}
               />
 
               <Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
                 <Box
                   sx={{
+                    height: "auto",
+                    maxHeight: "50vh",
+                    overflowY: "auto",
                     border: 1,
                     borderTop: 0,
-                    borderColor: "common.textGrey",
+                    borderColor: "common.borderColor",
                     backgroundColor: "common.white",
                     p: 2,
-                    // @ts-ignore
-                    width: suggestionListRef.current?.offsetWidth - 100,
+                    mb: 10,
+                    borderBottomLeftRadius: 8,
+                    borderBottomRightRadius: 8,
+                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                    width:
+                      // @ts-ignore
+                      suggestionListRef.current?.offsetWidth,
                   }}
                 >
                   {suggestionListFetchedData?.length === 0 && (
                     <Typography>موردی یافت نشد.</Typography>
                   )}
-                  {suggestionListFetchedData.map((props, index) => (
+                  {suggestionListFetchedData.slice(0, 6).map((props, index) => (
                     <SearchedProductWithThumbnail key={index} {...props} />
                   ))}
-                  {suggestionListFetchedData.map((props, index) => (
-                    <SearchedProduct
-                      key={index}
-                      {...props}
-                      searchText={searchText}
-                    />
-                  ))}
+                  {suggestionListFetchedData
+                    .slice(6, 11)
+                    .map((props, index) => (
+                      <SearchedProduct
+                        key={index}
+                        {...props}
+                        searchText={searchText}
+                      />
+                    ))}
                 </Box>
               </Popper>
             </Grid>
@@ -209,13 +283,48 @@ export default function Search() {
 
           <Typography
             color={"common.textGrey"}
-            sx={{ color: "primary.main", fontWeight: "bold" }}
+            onClick={() => handleFiltering(0)}
+            sx={{
+              color: filterType === 0 ? "primary.main" : "common.black",
+              fontWeight: filterType === 0 ? "bold" : "normal",
+              cursor: "pointer",
+            }}
           >
             مرتبط ترین
           </Typography>
-          <Typography color={"common.textGrey"}>پرفروش ترین</Typography>
-          <Typography color={"common.textGrey"}>ارزان ترین</Typography>
-          <Typography color={"common.textGrey"}>گران ترین</Typography>
+          <Typography
+            color={"common.textGrey"}
+            onClick={() => handleFiltering(1)}
+            sx={{
+              color: filterType === 1 ? "primary.main" : "common.black",
+              fontWeight: filterType === 1 ? "bold" : "normal",
+              cursor: "pointer",
+            }}
+          >
+            گران ترین
+          </Typography>
+          <Typography
+            color={"common.textGrey"}
+            onClick={() => handleFiltering(2)}
+            sx={{
+              color: filterType === 2 ? "primary.main" : "common.black",
+              fontWeight: filterType === 2 ? "bold" : "normal",
+              cursor: "pointer",
+            }}
+          >
+            ارزان ترین
+          </Typography>
+          <Typography
+            color={"common.textGrey"}
+            onClick={() => handleFiltering(3)}
+            sx={{
+              color: filterType === 3 ? "primary.main" : "common.black",
+              fontWeight: filterType === 3 ? "bold" : "normal",
+              cursor: "pointer",
+            }}
+          >
+            قیمت مناسب
+          </Typography>
         </Box>
 
         <Typography>

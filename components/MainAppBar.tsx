@@ -27,7 +27,7 @@ function MainAppBar() {
 
         <Image
           src={SearcheraLogoWhite}
-          width={150}
+          width={130}
           height={undefined}
           alt="Searchera Logo"
         />

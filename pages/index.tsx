@@ -1,11 +1,9 @@
 import {
-  AppBar,
   Box,
   ClickAwayListener,
   Grid,
   Popper,
   TextField,
-  Toolbar,
   Typography,
   filledInputClasses,
   styled,
@@ -17,13 +15,14 @@ import axios from "axios";
 import SearchedProductWithThumbnail from "@/components/SearchedProductWithThumbnail";
 import SearchedProduct from "@/components/SearchedProduct";
 import Logo from "@/public/images/Logo.svg";
-import SearcheraLogo from "@/public/images/Searchera-Logo.svg";
+import CancelIcon from "@mui/icons-material/Cancel";
 import Image from "next/image";
 import MainAppBar from "@/components/MainAppBar";
+import Link from "next/link";
 
 const STextField = styled(TextField)(({ theme }) => ({
   [`& .${filledInputClasses.root}`]: {
-    borderRadius: theme.spacing(2),
+    borderRadius: theme.spacing(1),
   },
   [`& .${filledInputClasses.root}::before`]: {
     borderBottom: 0,
@@ -41,40 +40,33 @@ export default function Home() {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [searchText, setSearchText] = useState<string>("");
-  const [searchTextDelay, setSearchTextDelay] = useState<string>("");
   const suggestionListRef = useRef(null);
   const query = router.query.query;
   const [fetchedData, setFetchedData] = useState<any[]>([]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setSearchTextDelay(searchText);
-    }, 500);
-  }, [searchText]);
+    setFetchedData([]);
 
-  useEffect(() => {
-    if (searchTextDelay.length > 0) {
-      setFetchedData([]);
-
+    if (searchText.length > 0) {
       axios
         .post("http://127.0.0.1:5000/api/amirhoseyn", {
-          input_searchbox: String(searchTextDelay),
+          input_searchbox: String(searchText),
+          input_type: 0,
         })
         .then((result) => {
           if (result.data.length > 0) {
             let allData: any[] = [];
 
             result.data.forEach((i: any, index: number) => {
-              if (index < 5) allData.push(i);
+              if (index < 11) allData.push(i);
             });
-            console.info(allData);
             setFetchedData(allData);
           }
         });
 
       setAnchorEl(suggestionListRef.current);
     } else setAnchorEl(null);
-  }, [searchTextDelay, query]);
+  }, [searchText, query]);
 
   return (
     <>
@@ -89,13 +81,15 @@ export default function Home() {
           alignItems: "center",
         }}
       >
-        <Image
-          style={{ margin: "0 auto", display: "block" }}
-          src={Logo}
-          width={200}
-          height={undefined}
-          alt={"Logo"}
-        />
+        <Link href={"/"}>
+          <Image
+            style={{ margin: "0 auto", display: "block" }}
+            src={Logo}
+            width={200}
+            height={undefined}
+            alt={"Logo"}
+          />
+        </Link>
 
         <Grid
           mt={5}
@@ -114,6 +108,24 @@ export default function Home() {
           >
             <Grid width={"100%"}>
               <STextField
+                sx={{
+                  ["& .MuiInputBase-root"]: {
+                    border: searchText.length && 1,
+                    borderColor:
+                      searchText.length &&
+                      // @ts-ignore
+                      "common.borderColor",
+                    backgroundColor: searchText.length && "common.white",
+                    borderBottomRightRadius: searchText.length ? 0 : 8,
+                    borderBottomLeftRadius: searchText.length ? 0 : 8,
+                    borderBottom: searchText.length && 1,
+                    borderBottomColor:
+                      searchText.length &&
+                      // @ts-ignore
+                      "common.suggestionListBorderColor",
+                  },
+                }}
+                value={searchText}
                 autoComplete="off"
                 ref={suggestionListRef}
                 fullWidth
@@ -122,12 +134,22 @@ export default function Home() {
                 InputProps={{
                   disableUnderline: true,
                   startAdornment: (
-                    <SearchIcon sx={{ mr: 1, color: "common.textGrey" }} />
+                    <SearchIcon sx={{ mr: 1, color: "common.iconColor" }} />
+                  ),
+                  endAdornment: (
+                    <CancelIcon
+                      onClick={() => setSearchText("")}
+                      sx={{
+                        ml: 1,
+                        color: "common.iconColor",
+                        display: searchText.length ? "block" : "none",
+                        cursor: "pointer",
+                      }}
+                    />
                   ),
                 }}
                 onChange={(event) => setSearchText(event.target.value)}
                 onKeyDown={(event) => {
-                  console.info(event.code);
                   if (event.code === "Enter" || event.code === "NumpadEnter")
                     router.push({
                       pathname: "/search/",
@@ -142,22 +164,31 @@ export default function Home() {
               <Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
                 <Box
                   sx={{
+                    height: "auto",
+                    maxHeight: "50vh",
+                    overflowY: "auto",
                     border: 1,
                     borderTop: 0,
-                    borderColor: "common.textGrey",
+                    borderColor: "common.borderColor",
                     backgroundColor: "common.white",
                     p: 2,
-                    // @ts-ignore
-                    width: suggestionListRef.current?.offsetWidth - 100,
+                    mb: 10,
+                    borderBottomLeftRadius: 8,
+                    borderBottomRightRadius: 8,
+                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                    width:
+                      // @ts-ignore
+                      suggestionListRef.current?.offsetWidth -
+                      (fetchedData.length ? 10 : 0),
                   }}
                 >
                   {fetchedData?.length === 0 && (
                     <Typography>موردی یافت نشد.</Typography>
                   )}
-                  {fetchedData.map((props, index) => (
+                  {fetchedData.slice(0, 6).map((props, index) => (
                     <SearchedProductWithThumbnail key={index} {...props} />
                   ))}
-                  {fetchedData.map((props, index) => (
+                  {fetchedData.slice(6, 11).map((props, index) => (
                     <SearchedProduct
                       key={index}
                       {...props}

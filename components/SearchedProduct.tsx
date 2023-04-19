@@ -37,7 +37,9 @@ function SearchedProduct({ searchText, title_fa, url }: SearchedProductProps) {
           }}
         />
         <Typography>{searchText}</Typography>
-        <Typography sx={{ fontWeight: "bold" }}>{title_fa}</Typography>
+        <Typography sx={{ fontWeight: "700" }}>
+          {title_fa.slice(0, 30) + "..."}
+        </Typography>
       </Link>
     </Box>
   );

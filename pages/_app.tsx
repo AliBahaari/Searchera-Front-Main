@@ -22,7 +22,10 @@ const theme = createTheme({
       // @ts-ignore
       textGrey: "#767790",
       backgroundGrey: "#F8F8F8",
-      golden: "#FFD700",
+      iconColor: "#3F4064",
+      goldenColor: "#FFD700",
+      borderColor: "#E0E0E0",
+      suggestionListBorderColor: "#00D4EE",
     },
   },
   typography: {
