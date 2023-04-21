@@ -41,32 +41,33 @@ export default function Home() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [searchText, setSearchText] = useState<string>("");
   const suggestionListRef = useRef(null);
-  const query = router.query.query;
   const [fetchedData, setFetchedData] = useState<any[]>([]);
 
   useEffect(() => {
+    async function fetchQuery(searchText: string) {
+      const fetchQueryRequest = await axios.post(
+        "http://127.0.0.1:5000/api/amirhoseyn",
+        {
+          input_searchbox: String(searchText),
+          input_type: 0,
+        }
+      );
+
+      if (fetchQueryRequest.data.length > 0) {
+        setFetchedData(
+          (fetchQueryRequest.data as any[]).filter((_, index) => index < 11)
+        );
+      }
+
+      setAnchorEl(suggestionListRef.current);
+    }
+
     setFetchedData([]);
 
     if (searchText.length > 0) {
-      axios
-        .post("http://127.0.0.1:5000/api/amirhoseyn", {
-          input_searchbox: String(searchText),
-          input_type: 0,
-        })
-        .then((result) => {
-          if (result.data.length > 0) {
-            let allData: any[] = [];
-
-            result.data.forEach((i: any, index: number) => {
-              if (index < 11) allData.push(i);
-            });
-            setFetchedData(allData);
-          }
-        });
-
-      setAnchorEl(suggestionListRef.current);
+      fetchQuery(searchText);
     } else setAnchorEl(null);
-  }, [searchText, query]);
+  }, [searchText]);
 
   return (
     <>
