@@ -20,7 +20,7 @@ function AllProducts() {
   useEffect(() => {
     async function fetchQuery() {
       const fetchQueryRequest = await axios.post(
-        "http://127.0.0.1:5000/api/amirhoseyn",
+        "http://127.0.0.1:5000/api/search",
         {
           input_searchbox: String(query),
           input_type: 0,
@@ -40,7 +40,7 @@ function AllProducts() {
       setShowLoading(true);
 
       const fetchQueryRequest = await axios.post(
-        "http://127.0.0.1:5000/api/amirhoseyn",
+        "http://127.0.0.1:5000/api/search",
         {
           input_searchbox: String(query),
           input_type: inputType,

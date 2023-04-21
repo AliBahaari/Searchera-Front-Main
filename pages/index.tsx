@@ -46,7 +46,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchQuery(searchText: string) {
       const fetchQueryRequest = await axios.post(
-        "http://127.0.0.1:5000/api/amirhoseyn",
+        "http://127.0.0.1:5000/api/search",
         {
           input_searchbox: String(searchText),
           input_type: 0,
@@ -55,7 +55,7 @@ export default function Home() {
 
       if (fetchQueryRequest.data.length > 0) {
         setFetchedData(
-          (fetchQueryRequest.data as any[]).filter((_, index) => index < 11)
+          (fetchQueryRequest.data as any[]).filter((_, index) => index < 5)
         );
       }
 
@@ -75,7 +75,7 @@ export default function Home() {
 
       <Box
         sx={{
-          height: "calc(100vh - 200px)",
+          height: "calc(50vh)",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -186,15 +186,8 @@ export default function Home() {
                   {fetchedData?.length === 0 && (
                     <Typography>موردی یافت نشد.</Typography>
                   )}
-                  {fetchedData.slice(0, 6).map((props, index) => (
+                  {fetchedData.map((props, index) => (
                     <SearchedProductWithThumbnail key={index} {...props} />
-                  ))}
-                  {fetchedData.slice(6, 11).map((props, index) => (
-                    <SearchedProduct
-                      key={index}
-                      {...props}
-                      searchText={searchText}
-                    />
                   ))}
                 </Box>
               </Popper>
