@@ -48,6 +48,22 @@ function SearchedProductWithThumbnail({
             />
           </div>
         </Link>
+
+        <Grid
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          mt={1}
+        >
+          <Box
+            sx={{
+              width: 10,
+              height: 10,
+              backgroundColor: "#000",
+              borderRadius: 10,
+            }}
+          ></Box>
+        </Grid>
       </Grid>
       <Grid item xs={10} display={"flex"} flexDirection={"column"} pl={1}>
         <Box

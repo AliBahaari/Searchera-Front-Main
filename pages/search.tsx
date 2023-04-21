@@ -12,7 +12,7 @@ import {
   Backdrop,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Logo from "@/public/images/Logo.svg";
@@ -68,47 +68,55 @@ export default function Search() {
   }, [query]);
 
   useEffect(() => {
+    async function fetchQuery(searchText: string) {
+      const fetchQueryRequest = await axios.post(
+        "http://127.0.0.1:5000/api/amirhoseyn",
+        {
+          input_searchbox: String(searchText),
+          input_type: 0,
+        }
+      );
+
+      if (fetchQueryRequest.data.length > 0) {
+        let allData: any[] = [];
+
+        fetchQueryRequest.data.forEach((i: any, index: number) => {
+          if (index < 11) allData.push(i);
+        });
+
+        setSuggestionListFetchedData(allData);
+      }
+
+      setAnchorEl(suggestionListRef.current);
+    }
+
     setSuggestionListFetchedData([]);
 
     if (searchText.length > 0) {
-      axios
-        .post("http://127.0.0.1:5000/api/amirhoseyn", {
-          input_searchbox: String(searchText),
-          input_type: 0,
-        })
-        .then((result) => {
-          if (result.data.length > 0) {
-            let allData: any[] = [];
-
-            result.data.forEach((i: any, index: number) => {
-              if (index < 11) allData.push(i);
-            });
-
-            setSuggestionListFetchedData(allData);
-          }
-        });
-
-      setAnchorEl(suggestionListRef.current);
+      fetchQuery(searchText);
     } else setAnchorEl(null);
   }, [searchText]);
 
   const [filterType, setFilterType] = useState<number>(0);
 
-  const handleFiltering = async (inputType: number) => {
-    setShowLoading(true);
+  const handleFiltering = useCallback(
+    async (inputType: number) => {
+      setShowLoading(true);
 
-    const fetchQueryRequest = await axios.post(
-      "http://127.0.0.1:5000/api/amirhoseyn",
-      {
-        input_searchbox: String(query),
-        input_type: inputType,
-      }
-    );
+      const fetchQueryRequest = await axios.post(
+        "http://127.0.0.1:5000/api/amirhoseyn",
+        {
+          input_searchbox: String(query),
+          input_type: inputType,
+        }
+      );
 
-    setShowLoading(false);
-    setFilterType(inputType);
-    setFetchedData(fetchQueryRequest.data);
-  };
+      setShowLoading(false);
+      setFilterType(inputType);
+      setFetchedData(fetchQueryRequest.data);
+    },
+    [query]
+  );
 
   const [showLoading, setShowLoading] = useState<boolean>(false);
 

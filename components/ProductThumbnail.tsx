@@ -1,4 +1,4 @@
-import { Box, Chip, Typography } from "@mui/material";
+import { Box, Chip, Grid, Typography } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import Image from "next/image";
 import Link from "next/link";
@@ -58,6 +58,24 @@ export default function ProductThumbnail({
             alt={title_fa}
             sizes="100%"
           />
+
+          <Grid
+            display={"flex"}
+            flexDirection={"column"}
+            justifyContent={"flex-start"}
+            alignItems={"center"}
+            width={20}
+            height={"100%"}
+          >
+            <Box
+              sx={{
+                width: 10,
+                height: 10,
+                backgroundColor: "#000",
+                borderRadius: 10,
+              }}
+            ></Box>
+          </Grid>
         </div>
       </Link>
 
