@@ -4,11 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 type SearchedProductWithThumbnailProps = {
-  color: Array<string>;
-  id: number;
+  hex_color: Array<string>;
   images_url: string;
   price: number;
-  rate: number;
   rate_star: number;
   title_fa: string;
   url: string;
@@ -20,6 +18,7 @@ function SearchedProductWithThumbnail({
   url,
   rate_star,
   price,
+  hex_color,
 }: SearchedProductWithThumbnailProps) {
   return (
     <Grid
@@ -54,15 +53,19 @@ function SearchedProductWithThumbnail({
           justifyContent={"center"}
           alignItems={"center"}
           mt={1}
+          gap={0.5}
         >
-          <Box
-            sx={{
-              width: 10,
-              height: 10,
-              backgroundColor: "#000",
-              borderRadius: 10,
-            }}
-          ></Box>
+          {hex_color?.map((colorHexCode) => (
+            <Box
+              key={colorHexCode}
+              sx={{
+                width: 10,
+                height: 10,
+                backgroundColor: colorHexCode,
+                borderRadius: 10,
+              }}
+            ></Box>
+          ))}
         </Grid>
       </Grid>
       <Grid item xs={10} display={"flex"} flexDirection={"column"} pl={1}>

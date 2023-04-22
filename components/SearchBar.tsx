@@ -56,7 +56,9 @@ function SearchBar() {
 
       if (fetchQueryRequest.data.length > 0) {
         setSuggestionListFetchedData(
-          (fetchQueryRequest.data as any[]).filter((_, index) => index < 5)
+          (fetchQueryRequest.data as any[])
+            .filter((_) => _.price !== 0)
+            .filter((_, index) => index < 5)
         );
       }
 

@@ -3,12 +3,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import Link from "next/link";
 
 type SearchedProductProps = {
-  color: Array<string>;
-  id: number;
-  images_url: string;
-  price: number;
-  rate: number;
-  rate_star: number;
   title_fa: string;
   url: string;
   searchText: string;

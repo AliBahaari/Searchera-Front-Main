@@ -14,12 +14,10 @@ const styleProps = {
 };
 
 type ProductThumbnailProps = {
-  digiplus_delivery: Array<string>;
-  color: Array<string>;
-  id: number;
+  digiPlus_delivery: Array<string>;
+  hex_color: Array<string>;
   images_url: string;
   price: number;
-  rate: number;
   rate_star: number;
   title_fa: string;
   url: string;
@@ -28,10 +26,11 @@ type ProductThumbnailProps = {
 export default function ProductThumbnail({
   title_fa,
   rate_star,
-  digiplus_delivery,
+  digiPlus_delivery,
   images_url,
   price,
   url,
+  hex_color,
 }: ProductThumbnailProps) {
   return (
     <Box
@@ -59,29 +58,35 @@ export default function ProductThumbnail({
             sizes="100%"
           />
 
-          <Grid
-            display={"flex"}
-            flexDirection={"column"}
-            justifyContent={"flex-start"}
-            alignItems={"center"}
-            width={20}
-            height={"100%"}
-          >
-            <Box
-              sx={{
-                width: 10,
-                height: 10,
-                backgroundColor: "#000",
-                borderRadius: 10,
-              }}
-            ></Box>
+          <Grid display={"flex"} justifyContent={"flex-end"}>
+            <Grid
+              display={"flex"}
+              flexDirection={"column"}
+              justifyContent={"flex-start"}
+              alignItems={"center"}
+              width={20}
+              height={"100%"}
+              gap={0.5}
+            >
+              {hex_color?.map((colorHexCode) => (
+                <Box
+                  key={colorHexCode}
+                  sx={{
+                    width: 10,
+                    height: 10,
+                    backgroundColor: colorHexCode,
+                    borderRadius: 10,
+                  }}
+                ></Box>
+              ))}
+            </Grid>
           </Grid>
         </div>
       </Link>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 3 }}>
         <Chip
-          label={digiplus_delivery[0]}
+          label={digiPlus_delivery[0]}
           icon={
             <Image
               src={Truck}

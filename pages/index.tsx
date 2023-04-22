@@ -55,7 +55,9 @@ export default function Home() {
 
       if (fetchQueryRequest.data.length > 0) {
         setFetchedData(
-          (fetchQueryRequest.data as any[]).filter((_, index) => index < 5)
+          (fetchQueryRequest.data as any[])
+            .filter((_) => _.price !== 0)
+            .filter((_, index) => index < 5)
         );
       }
 
@@ -179,8 +181,7 @@ export default function Home() {
                     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
                     width:
                       // @ts-ignore
-                      suggestionListRef.current?.offsetWidth -
-                      (fetchedData.length ? 10 : 0),
+                      suggestionListRef.current?.offsetWidth,
                   }}
                 >
                   {fetchedData?.length === 0 && (
