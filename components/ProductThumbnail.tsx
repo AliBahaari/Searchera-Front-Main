@@ -72,8 +72,8 @@ export default function ProductThumbnail({
                 <Box
                   key={colorHexCode}
                   sx={{
-                    width: 10,
-                    height: 10,
+                    width: 8,
+                    height: 8,
                     backgroundColor: colorHexCode,
                     borderRadius: 10,
                   }}

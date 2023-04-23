@@ -127,7 +127,7 @@ function SearchBar() {
                     "common.suggestionListBorderColor",
                 },
               }}
-              value={searchText}
+              value={searchText || router.query.query}
               autoComplete="off"
               ref={suggestionListRef}
               fullWidth
