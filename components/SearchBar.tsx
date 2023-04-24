@@ -7,15 +7,15 @@ import {
   filledInputClasses,
   ClickAwayListener,
   Popper,
+  Divider,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Logo from "@/public/images/Logo.svg";
 import Image from "next/image";
 import SearchedProductWithThumbnail from "@/components/SearchedProductWithThumbnail";
-import SearchedProduct from "@/components/SearchedProduct";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Link from "next/link";
 
@@ -55,10 +55,15 @@ function SearchBar() {
       );
 
       if (fetchQueryRequest.data.length > 0) {
+        const availableProducts = (fetchQueryRequest.data as any[]).filter(
+          (_) => _.price !== 0
+        );
+        availableProducts.sort((prevProduct, nextProduct) =>
+          prevProduct.rate_star < nextProduct.rate_star ? 1 : -1
+        );
+
         setSuggestionListFetchedData(
-          (fetchQueryRequest.data as any[])
-            .filter((_) => _.price !== 0)
-            .filter((_, index) => index < 5)
+          availableProducts.filter((_, index) => index < 5)
         );
       }
 
@@ -71,6 +76,13 @@ function SearchBar() {
       fetchQuery(searchText);
     } else setAnchorEl(null);
   }, [searchText]);
+
+  const [changedValue, setChangedValue] = useState<boolean>(false);
+
+  const textFieldValue = useMemo(() => {
+    if (changedValue) return searchText;
+    else return router.query.query;
+  }, [searchText, router.query.query, changedValue]);
 
   return (
     <Grid container gap={2} p={4}>
@@ -120,14 +132,11 @@ function SearchBar() {
                   backgroundColor: searchText.length && "common.white",
                   borderBottomRightRadius: searchText.length ? 0 : 8,
                   borderBottomLeftRadius: searchText.length ? 0 : 8,
-                  borderBottom: searchText.length && 1,
-                  borderBottomColor:
-                    searchText.length &&
-                    // @ts-ignore
-                    "common.suggestionListBorderColor",
+                  borderBottom: searchText.length ? 0 : 1,
+                  borderBottomColor: "transparent",
                 },
               }}
-              value={searchText || router.query.query}
+              value={textFieldValue}
               autoComplete="off"
               ref={suggestionListRef}
               fullWidth
@@ -150,7 +159,10 @@ function SearchBar() {
                   />
                 ),
               }}
-              onChange={(event) => setSearchText(event.target.value)}
+              onChange={(event) => {
+                setSearchText(event.target.value);
+                setChangedValue(true);
+              }}
               onKeyDown={(event) => {
                 if (event.code === "Enter" || event.code === "NumpadEnter")
                   router.push({
@@ -174,20 +186,33 @@ function SearchBar() {
                   borderColor: "common.borderColor",
                   backgroundColor: "common.white",
                   p: 2,
+                  pt: 0,
                   mb: 10,
                   borderBottomLeftRadius: 8,
                   borderBottomRightRadius: 8,
-                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                  boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.2)",
                   width:
                     // @ts-ignore
                     suggestionListRef.current?.offsetWidth,
                 }}
               >
+                <Box
+                  sx={{
+                    height: 2,
+                    backgroundColor: "common.suggestionListBorderColor",
+                    mb: 2,
+                  }}
+                ></Box>
+
                 {suggestionListFetchedData?.length === 0 && (
                   <Typography>موردی یافت نشد.</Typography>
                 )}
                 {suggestionListFetchedData.map((props, index) => (
-                  <SearchedProductWithThumbnail key={index} {...props} />
+                  <>
+                    <SearchedProductWithThumbnail key={index} {...props} />
+
+                    {index < 4 && <Divider sx={{ mb: 2 }} />}
+                  </>
                 ))}
               </Box>
             </Popper>

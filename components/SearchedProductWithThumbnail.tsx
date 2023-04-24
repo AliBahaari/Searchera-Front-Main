@@ -21,13 +21,7 @@ function SearchedProductWithThumbnail({
   hex_color,
 }: SearchedProductWithThumbnailProps) {
   return (
-    <Grid
-      container
-      mb={2}
-      borderBottom={1}
-      borderColor={"common.borderColor"}
-      pb={1}
-    >
+    <Grid container mb={2}>
       <Grid item xs={2}>
         <Link href={"https://www.digikala.com" + url} target="_blank">
           <div

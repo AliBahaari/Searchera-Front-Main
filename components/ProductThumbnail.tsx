@@ -84,7 +84,15 @@ export default function ProductThumbnail({
         </div>
       </Link>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          p: 3,
+          justifyContent: "space-between",
+        }}
+      >
         <Chip
           label={digiPlus_delivery[0]}
           icon={
@@ -113,7 +121,7 @@ export default function ProductThumbnail({
             textAlign: "justify",
           }}
         >
-          <Typography variant="h5" sx={{ fontWeight: 400 }}>
+          <Typography variant="h5" sx={{ fontWeight: 400, height: 100 }}>
             {title_fa}
           </Typography>
         </Link>
@@ -132,7 +140,12 @@ export default function ProductThumbnail({
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
             {price !== 0
               ? `${parseInt(

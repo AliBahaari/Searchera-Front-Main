@@ -1,6 +1,7 @@
 import {
   Box,
   ClickAwayListener,
+  Divider,
   Grid,
   Popper,
   TextField,
@@ -13,7 +14,6 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import SearchedProductWithThumbnail from "@/components/SearchedProductWithThumbnail";
-import SearchedProduct from "@/components/SearchedProduct";
 import Logo from "@/public/images/Logo.svg";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Image from "next/image";
@@ -54,11 +54,14 @@ export default function Home() {
       );
 
       if (fetchQueryRequest.data.length > 0) {
-        setFetchedData(
-          (fetchQueryRequest.data as any[])
-            .filter((_) => _.price !== 0)
-            .filter((_, index) => index < 5)
+        const availableProducts = (fetchQueryRequest.data as any[]).filter(
+          (_) => _.price !== 0
         );
+        availableProducts.sort((prevProduct, nextProduct) =>
+          prevProduct.rate_star < nextProduct.rate_star ? 1 : -1
+        );
+
+        setFetchedData(availableProducts.filter((_, index) => index < 5));
       }
 
       setAnchorEl(suggestionListRef.current);
@@ -109,7 +112,7 @@ export default function Home() {
               setSearchText("");
             }}
           >
-            <Grid width={"100%"}>
+            <Grid maxWidth={"100%"} width={500}>
               <STextField
                 sx={{
                   ["& .MuiInputBase-root"]: {
@@ -121,11 +124,8 @@ export default function Home() {
                     backgroundColor: searchText.length && "common.white",
                     borderBottomRightRadius: searchText.length ? 0 : 8,
                     borderBottomLeftRadius: searchText.length ? 0 : 8,
-                    borderBottom: searchText.length && 1,
-                    borderBottomColor:
-                      searchText.length &&
-                      // @ts-ignore
-                      "common.suggestionListBorderColor",
+                    borderBottom: searchText.length ? 0 : 1,
+                    borderBottomColor: "transparent",
                   },
                 }}
                 value={searchText}
@@ -175,20 +175,33 @@ export default function Home() {
                     borderColor: "common.borderColor",
                     backgroundColor: "common.white",
                     p: 2,
+                    pt: 0,
                     mb: 10,
                     borderBottomLeftRadius: 8,
                     borderBottomRightRadius: 8,
-                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                    boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.2)",
                     width:
                       // @ts-ignore
                       suggestionListRef.current?.offsetWidth,
                   }}
                 >
+                  <Box
+                    sx={{
+                      height: 2,
+                      backgroundColor: "common.suggestionListBorderColor",
+                      mb: 2,
+                    }}
+                  ></Box>
+
                   {fetchedData?.length === 0 && (
                     <Typography>موردی یافت نشد.</Typography>
                   )}
                   {fetchedData.map((props, index) => (
-                    <SearchedProductWithThumbnail key={index} {...props} />
+                    <>
+                      <SearchedProductWithThumbnail key={index} {...props} />
+
+                      {index < 4 && <Divider sx={{ mb: 2 }} />}
+                    </>
                   ))}
                 </Box>
               </Popper>

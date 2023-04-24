@@ -2,7 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["dkstatics-public.digikala.com"],
+    domains: [
+      "dkstatics-public.digikala.com",
+      "dkstatics-public-2.digikala.com",
+    ],
   },
 };
 
