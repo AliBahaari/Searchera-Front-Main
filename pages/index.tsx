@@ -200,7 +200,9 @@ export default function Home() {
                     <>
                       <SearchedProductWithThumbnail key={index} {...props} />
 
-                      {index < 4 && <Divider sx={{ mb: 2 }} />}
+                      {fetchedData?.length - 1 > index && (
+                        <Divider sx={{ mb: 2 }} />
+                      )}
                     </>
                   ))}
                 </Box>

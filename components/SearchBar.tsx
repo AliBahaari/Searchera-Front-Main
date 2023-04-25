@@ -211,7 +211,9 @@ function SearchBar() {
                   <>
                     <SearchedProductWithThumbnail key={index} {...props} />
 
-                    {index < 4 && <Divider sx={{ mb: 2 }} />}
+                    {suggestionListFetchedData?.length - 1 > index && (
+                      <Divider sx={{ mb: 2 }} />
+                    )}
                   </>
                 ))}
               </Box>
