@@ -76,7 +76,7 @@ export default function Home() {
 
   return (
     <>
-      <MainAppBar />
+      {/* <MainAppBar /> */}
 
       <Box
         sx={{
